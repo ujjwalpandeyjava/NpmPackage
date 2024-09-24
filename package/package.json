@@ -1,0 +1,31 @@
+{
+  "name": "intellylabs-bot",
+  "version": "1.0.0",
+  "main": ".build/index.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "author": "Ujjwal Pandey",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "prop-types": "^15.8.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "5.0.1",
+    "sass": "^1.79.3",
+    "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/preset-react": "^7.24.7",
+    "css-loader": "^7.1.2",
+    "sass-loader": "^16.0.2",
+    "svg-loader": "^0.0.2",
+    "webpack-cli": "^5.1.4"
+  }
+}
