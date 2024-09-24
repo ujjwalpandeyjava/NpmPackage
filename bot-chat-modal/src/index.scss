@@ -6,3 +6,247 @@
 	margin: 0;
 	box-sizing: border-box;
 }
+
+:root {
+	--varX: #000202;
+}
+.bubble * {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.bubble {
+	position: fixed;
+	padding: 0;
+	bottom: 20px;
+	right: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	overflow: visible;
+	min-height: auto;
+	height: 60px;
+	width: 60px;
+}
+
+.updateIcon {
+	user-select: none;
+	display: grid;
+	place-items: center;
+	overflow: hidden;
+	width: 60px;
+	height: 60px;
+	background-color: var(--varX);
+	border-radius: 50%;
+	cursor: pointer;
+	transition: background-color 0.3s;
+	box-shadow: 0 4px 8px rgba(231, 231, 231, 0.2);
+}
+
+.updateIcon:hover {
+	background-color: var(--varX);
+	box-shadow: 0 4px 8px rgba(221, 221, 221, 0.37);
+}
+
+.updateIcon > div {
+	height: 60px;
+	width: 60px;
+	display: grid;
+	place-items: center;
+	transition: all 0.3s;
+}
+
+.updateIcon.active > div {
+	transform: translateY(-60px);
+}
+
+.updateIcon svg,
+.updateIcon img {
+	font-size: 2.5rem;
+	// width: 2rem;
+	width: 60%;
+	color: white;
+	aspect-ratio: 1/1;
+}
+
+/* botArea */
+.botArea {
+	position: absolute;
+	background-color: rgb(255, 255, 255);
+	height: 70vh;
+	max-height: calc(-104px + 100vh);
+	min-width: 300px;
+	width: 90vw;
+	max-width: 380px;
+	bottom: -70vh;
+	opacity: 0;
+	right: 100%;
+	overscroll-behavior: none;
+	transition: all 0.6s;
+	box-shadow: rgba(23, 73, 77, 0.15) 0px 20px 30px;
+	z-index: 999999;
+	border-radius: 16px;
+	overflow: hidden;
+	border: 0px;
+}
+.botSection {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-items: stretch;
+	justify-content: space-between;
+	position: absolute;
+	inset: 0;
+}
+
+.updateIcon.active + .botArea {
+	bottom: 80%;
+	opacity: 1;
+}
+.btn {
+	cursor: pointer;
+	outline: none;
+	border: none;
+	padding: 4px 8px;
+	display: inline-block;
+}
+.btn:hover {
+	filter: drop-shadow(0 0 2px gray);
+}
+
+.header {
+	background-color: var(--varX);
+	color: white;
+	display: flex;
+	align-items: stretch;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	padding: 12px;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+}
+.menuOptions,
+.logoTitle,
+.minimizeClose {
+}
+
+.logoTitle {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+.logoTitle img {
+	width: 35px;
+}
+.logoTitle .title {
+}
+.minimizeClose {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-evenly;
+	gap: 4px;
+}
+
+.content {
+	height: 100%;
+	max-height: 100%;
+	overflow: hidden;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-items: stretch;
+	justify-content: flex-start;
+}
+.content > .content_chat {
+	flex: 1;
+	border-bottom: 1px solid #bbbbbb;
+	overflow: auto;
+	padding: 8px 15px 0 15px;
+}
+.content_chatInputs {
+	display: flex;
+	padding: 8px 12px;
+	flex-direction: row;
+	gap: 8px;
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.content_chatInputs input {
+	outline: none;
+	background-color: transparent;
+	border: 1px solid gray;
+}
+#inputFieldText {
+	flex: 1;
+	width: 100%;
+	resize: none;
+	margin: 0px;
+	background: rgb(255, 255, 255);
+	font-size: 14px;
+	letter-spacing: -0.1px;
+	color: rgba(0, 0, 0, 0.85);
+	line-height: 1.25;
+	outline: none;
+	box-sizing: border-box;
+	padding: 10px 20px 10px 13px;
+	border: none;
+	border-radius: 8px;
+	font-family: "Montserrat", sans-serif !important;
+}
+
+.question {
+	box-shadow: 0 3px 4px #b8ffff96;
+	margin-bottom: 1rem;
+	display: flex;
+	justify-content: flex-end;
+	padding: 4px;
+}
+.answer {
+	box-shadow: 0 3px 4px #c0c9f466;
+	display: flex;
+	justify-content: flex-start;
+	border-radius: 4px;
+	padding: 4px;
+	margin-bottom: 1rem;
+}
+
+/* Node containing all the settings */
+.settingSection {
+	bottom: unset;
+	background-color: rgb(190, 189, 189);
+	position: absolute;
+	box-shadow: 0px 0 10px #b3b0b0c1;
+	padding: 0 10px 10px;
+	max-height: 75%;
+	overflow: auto;
+	display: block;
+	user-select: all;
+	inset: auto 0 0 0;
+	// bottom: 0%;
+	opacity: 1;
+	transition:
+		transform 600ms ease-in-out 100ms,
+		bottom 600ms ease-in-out 100ms,
+		display 10ms ease;
+}
+.settingSection.settingHidden {
+	user-select: none;
+	bottom: -80%;
+	box-shadow: unset;
+}
+
+.settingHeader {
+	background-color: white;
+	position: sticky;
+	top: 0;
+}
