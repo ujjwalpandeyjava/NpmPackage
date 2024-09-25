@@ -1,140 +1,168 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { FaChevronDown, FaRegWindowMinimize } from "react-icons/fa";
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
-import { IoMdChatboxes } from "react-icons/io";
-import { FaChevronDown } from "react-icons/fa";
-import { HiDotsVertical } from "react-icons/hi";
-import { FaRegWindowMinimize } from "react-icons/fa";
-import { ImCross } from "react-icons/im";
-import { IoClose } from "react-icons/io5";
+import React, { useEffect, useRef, useState } from 'react';
 import { RiCloseLargeFill } from "react-icons/ri";
-
-
-// import message from "./assets/message.svg";
-// import downArrow from "./assets/downArrow.svg";
-// import menu from "./assets/menu.svg";
-// import minimize from "./assets/minimize.svg";
-// import close from "./assets/close.svg";
-import './index.scss';
-
+import { IoMdChatboxes } from "react-icons/io";
+import { HashLoader } from "react-spinners"
+import ChatMessage from "./ChatMessage"
+import UseApi from "./UseApi";
+import './IMBot.scss';
 
 
 function IMBot() {
-	const [showModal, setShowModal] = useState(false);
-	const [webData, setWebData] = useState({});
+	const [showBot, setShowBot] = useState(false);
+	const [isSettingHidden, setIsSettingHidden] = useState(true);
+	const { hitApiWith: hitApiIsValidWeb, loading: loadingIsValidWeb, data: dataIsValidWeb, setData: setDataIsValidWeb, error: errorIsValidWeb } = UseApi();
+	const { hitApiWith: hitApiUserQuery, loading: loadingUserQuery, data: dataUserQuery, setData: setDataUserQuery, error: errorUserQuery } = UseApi();
 	const [chat, setChat] = useState([]);
-
-	const inputTxt = useRef(null);
+	const fieldInputQuery_Ref = useRef(null);
 
 	useEffect(() => {
-		fetch('http://localhost:8883/botAuth/isValid', { method: "GET" })
-			.then(response => {
-				if (response.status === 200)
-					return response.json();
-				else
-					throw new Error("Unauthorized website!")
-			})
-			.then(data => {
-				data = { ...data, botTitle: "Bot Title..." }		// Demo, data wil come from server
-				// throw new Error("Unauthorized website!")
-				// setWebData({})
-				setWebData(data)
-			})
-			.catch(error => {
-				console.error(error.message, error);
-
-				// alert(`Error: ${error.message}`);
-			});
+		hitApiIsValidWeb("/botAuth/isValid", "GET");
 	}, [])
+
+	function minimizeBot() {
+		setShowBot(old => !old)
+	}
 	function toggleChatBox() {
-		setShowModal(old => !old)
+		minimizeBot()
 		addIntroductionMessage()
 	}
 
 	function addIntroductionMessage() {
-		console.log("addIntroductionMessage...");
 		if (chat.length < 1)
 			setTimeout(() => {
-				setChat(old => [...old, { side: "bot", text: "How can I help you?" }])
+				addInChat("bot", "How can I help you?")
 			}, 750);
 	}
 
 	// Toggle focus on the input text field
 	useEffect(() => {
-		if (inputTxt?.current) {
-			if (showModal)
-				inputTxt.current.focus()
+		if (fieldInputQuery_Ref?.current) {
+			if (showBot)
+				fieldInputQuery_Ref.current.focus()
 			else
-				inputTxt.current.blur()
+				fieldInputQuery_Ref.current.blur()
 		}
-	}, [showModal])
+	}, [showBot])
+	/**
+	 * Minimize the bot, 
+	 */
+	function resetBot() {
+		console.log("resetBot...");
+		setShowBot(false)
+		initSession()
+	}
+	/**
+	 * Reset the session...
+	*/
+	function initSession() {
+		console.log("initSession...");
+		setChat([]);
+	}
+	function toggleSettings() {
+		setIsSettingHidden(old => !old)
+	}
 
-	if (webData?.allowed === true) {
+	function getQueryResponse(query) {
+		console.log("Query to send on server: ", query);
+		addInChat("user", query)
+		fieldInputQuery_Ref.current.value = null;
+		hitApiUserQuery("/botAuth/queryResponse", "GET", { query })
+	}
+	useEffect(() => {
+		console.log(dataUserQuery);
+		if (dataUserQuery?.data?.haveAnswer) {
+			setChat(oldChat => [...oldChat, { side: "bot", text: dataUserQuery.data.text }])
+		}
+
+	}, [dataUserQuery])
+
+	const handleKeyPress = (event) => {
+		if (fieldInputQuery_Ref?.current?.value) {
+			if (event.key === 'Enter') {
+				event.preventDefault(); 	// Prevent page reload on Enter
+				getQueryResponse(fieldInputQuery_Ref.current.value);
+			} else
+				validateTxt(fieldInputQuery_Ref?.current?.value)
+		}
+	};
+	function validateTxt(textToValidate) {
+		console.log("Validate txt: ", textToValidate);
+	}
+	function addInChat(whoMadeTxt, text) {
+		setChat(oldChat => [...oldChat, { side: whoMadeTxt, text }])
+	}
+
+
+
+	if (loadingIsValidWeb) {
+		return (
+			<div className="loadingBot">
+				<HashLoader color="orange" />
+			</div>
+		)
+	} else if (errorIsValidWeb) {
+		return (
+			<div className="errorInBotLoading">
+				{errorIsValidWeb}
+			</div>
+		)
+	} else if (dataIsValidWeb?.allowed === true) {
 		return (
 			<div className="bubble">
-				<div className={`showModal ${showModal ? "active" : ""}`} onClick={toggleChatBox}>
+				<div className={`showModal ${showBot ? "active" : ""}`} onClick={toggleChatBox}>
 					<div>
 						<IoMdChatboxes />
-						{/* <img src={message} alt="message" /> */}
 					</div>
 					<div>
 						<FaChevronDown />
-						{/* <img src={downArrow} alt="message" /> */}
 					</div>
 				</div>
 				<div className="botArea">
 					<section className="botSection">
 						<div className="header">
 							<div className="btn">
-								<PiDotsThreeOutlineVerticalFill />
-								{/* <img src={menu} alt="Close and minimize bot" /> */}
+								<PiDotsThreeOutlineVerticalFill onClick={toggleSettings} />
 							</div>
 							<div className="logo_and_title">
-								<img src="https://api.intellylabs.com/logo_image" alt="alt..." />
-								<div className="botChatTitle" title="Bot Title...">Bot Title...</div>
+								<img src={dataIsValidWeb.botConfig.botLogo} alt="alt..." />
+								<div title="Bot name">{dataIsValidWeb.botConfig.botTitle}</div>
 							</div>
 							<div className="minimizeClose">
 								<div className="btn">
-									<FaRegWindowMinimize />
-									{/* <img src={minimize} alt="Minimize bot" /> */}
+									<FaRegWindowMinimize onClick={minimizeBot} />
 								</div>
 								<div className="btn">
-									<RiCloseLargeFill />
-									{/* <img src={close} alt="Menu options" /> */}
+									<RiCloseLargeFill onClick={resetBot} />
 								</div>
 							</div>
 						</div>
 						<div className="content">
-							<div className="content_chat" id="content_chat"></div>
+							<div className="content_chat" >
+								{chat.map((eachChat, index) => <ChatMessage chatObj={eachChat} key={"chat_" + index} />)}
+							</div>
 							<div className="content_chatInputs">
-								<input type="text" id="inputFieldText" ref={inputTxt} placeholder="Message" />
+								<input type="text" id="inputFieldText" ref={fieldInputQuery_Ref} placeholder="Message" onKeyDownCapture={handleKeyPress} />
 							</div>
 						</div>
 					</section>
-					<section className="settingSection settingHidden" id="settingHidden">
+					<section className={`settingSection ${isSettingHidden ? "settingHidden" : ""}`} id="settingHidden">
 						<div className="settingHeader">
-							<div className="btn">X</div>
+							<div className="btn settingCloseBtn" onClick={toggleSettings}>X</div>
 						</div>
 						<div className="settingBody">
-							What is Lorem Ipsum?
-							Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-
-							Why do we use it?
-							It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-
-							Why do we use it?
-							It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-
-							Where does it come from?
-							Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum.
+							give settings...
 						</div>
 					</section>
 				</div>
 			</div>
 		)
-	} else if (!webData || !webData?.allowed || webData.allowed === false)
+	} else if (!dataIsValidWeb || !dataIsValidWeb?.allowed || dataIsValidWeb.allowed === false) {
 		return <div className="bubble">Unauthorized website!</div>
-	else
+	} else {
 		return <div className="bubble">Checking Info...</div>
+	}
 }
 
 export default IMBot

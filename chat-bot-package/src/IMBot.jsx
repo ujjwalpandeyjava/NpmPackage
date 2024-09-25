@@ -1,18 +1,38 @@
 import React, { useEffect, useRef, useState } from 'react';
-import downArrow from "./assets/downArrow.svg";
-import minimize from "./assets/minimize.svg";
-import message from "./assets/message.svg";
-import close from "./assets/close.svg";
-import menu from "./assets/menu.svg";
-import './index.scss';
-
-
+import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
+import { IoMdChatboxes } from "react-icons/io";
+import { FaChevronDown } from "react-icons/fa";
+import { FaRegWindowMinimize } from "react-icons/fa";
+import { RiCloseLargeFill } from "react-icons/ri";
+import './IMBot.scss';
 
 function IMBot() {
-	const [showModal, setShowModal] = useState();
+	const [showModal, setShowModal] = useState(false);
+	const [webData, setWebData] = useState({});
 	const [chat, setChat] = useState([]);
-	const inputTxt = useRef();
 
+	const inputTxt = useRef(null);
+
+	useEffect(() => {
+		fetch('http://localhost:8883/botAuth/isValid', { method: "GET" })
+			.then(response => {
+				if (response.status === 200)
+					return response.json();
+				else
+					throw new Error("Unauthorized website!")
+			})
+			.then(data => {
+				data = { ...data, botTitle: "Bot Title..." }		// Demo, data wil come from server
+				// throw new Error("Unauthorized website!")
+				// setWebData({})
+				setWebData(data)
+			})
+			.catch(error => {
+				console.error(error.message, error);
+
+				// alert(`Error: ${error.message}`);
+			});
+	}, [])
 	function toggleChatBox() {
 		setShowModal(old => !old)
 		addIntroductionMessage()
@@ -28,48 +48,56 @@ function IMBot() {
 
 	// Toggle focus on the input text field
 	useEffect(() => {
-		if (inputTxt)
+		if (inputTxt?.current) {
 			if (showModal)
 				inputTxt.current.focus()
 			else
 				inputTxt.current.blur()
+		}
 	}, [showModal])
 
-	return (
-		<div className="bubble">
-			<div className={`showModal ${showModal ? "active" : ""}`} onClick={toggleChatBox}>
-				<div>
-					<img src={message} alt="message" />
-				</div>
-				<div>
-					<img src={downArrow} alt="message" />
-				</div>
-			</div>
-			<div className="botArea">
-				<section className="botSection">
-					<div className="header">
-						<div className="btn menuOptions">
-							<img src={menu} alt="Close and minimize bot" />
-						</div>
-						<div className="logo_and_title">
-							<img src="https://api.intellylabs.com/logo_image" alt="alt..." />
-							<div className="botChatTitle" title="Bot Title...">Bot Title...</div>
-						</div>
-						<div className="minimizeClose">
-							<div className="btn">
-								<img src={minimize} alt="Minimize bot" />
-							</div>
-							<div className="btn">
-								<img src={close} alt="Menu options" />
-							</div>
-						</div>
+	if (webData?.allowed === true) {
+		return (
+			<div className="bubble">
+				<div className={`showModal ${showModal ? "active" : ""}`} onClick={toggleChatBox}>
+					<div>
+						<IoMdChatboxes />
+						{/* <img src={message} alt="message" /> */}
 					</div>
-					<div className="content">
-						<div className="content_chat" id="content_chat"></div>
-						<div className="content_chatInputs">
-							<input type="text" id="inputFieldText" ref={inputTxt} placeholder="Message" />
-						</div>
+					<div>
+						<FaChevronDown />
+						{/* <img src={downArrow} alt="message" /> */}
 					</div>
+				</div>
+				<div className="botArea">
+					<section className="botSection">
+						<div className="header">
+							<div className="btn">
+								<PiDotsThreeOutlineVerticalFill />
+								{/* <img src={menu} alt="Close and minimize bot" /> */}
+							</div>
+							<div className="logo_and_title">
+								<img src="https://api.intellylabs.com/logo_image" alt="alt..." />
+								<div className="botChatTitle" title="Bot Title...">Bot Title...</div>
+							</div>
+							<div className="minimizeClose">
+								<div className="btn">
+									<FaRegWindowMinimize />
+									{/* <img src={minimize} alt="Minimize bot" /> */}
+								</div>
+								<div className="btn">
+									<RiCloseLargeFill />
+									{/* <img src={close} alt="Menu options" /> */}
+								</div>
+							</div>
+						</div>
+						<div className="content">
+							<div className="content_chat" id="content_chat"></div>
+							<div className="content_chatInputs">
+								<input type="text" id="inputFieldText" ref={inputTxt} placeholder="Message" />
+							</div>
+						</div>
+					</section>
 					<section className="settingSection settingHidden" id="settingHidden">
 						<div className="settingHeader">
 							<div className="btn">X</div>
@@ -88,10 +116,13 @@ function IMBot() {
 							Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum.
 						</div>
 					</section>
-				</section>
+				</div>
 			</div>
-		</div>
-	)
+		)
+	} else if (!webData || !webData?.allowed || webData.allowed === false)
+		return <div className="bubble">Unauthorized website!</div>
+	else
+		return <div className="bubble">Checking Info...</div>
 }
 
 export default IMBot
