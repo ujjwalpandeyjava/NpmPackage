@@ -30,7 +30,7 @@
 	width: 60px;
 }
 
-.updateIcon {
+.showModal {
 	user-select: none;
 	display: grid;
 	place-items: center;
@@ -44,12 +44,12 @@
 	box-shadow: 0 4px 8px rgba(231, 231, 231, 0.2);
 }
 
-.updateIcon:hover {
+.showModal:hover {
 	background-color: var(--varX);
 	box-shadow: 0 4px 8px rgba(221, 221, 221, 0.37);
 }
 
-.updateIcon > div {
+.showModal > div {
 	height: 60px;
 	width: 60px;
 	display: grid;
@@ -57,12 +57,12 @@
 	transition: all 0.3s;
 }
 
-.updateIcon.active > div {
+.showModal.active > div {
 	transform: translateY(-60px);
 }
 
-.updateIcon svg,
-.updateIcon img {
+.showModal svg,
+.showModal img {
 	font-size: 2.5rem;
 	// width: 2rem;
 	width: 60%;
@@ -100,7 +100,7 @@
 	inset: 0;
 }
 
-.updateIcon.active + .botArea {
+.showModal.active + .botArea {
 	bottom: 80%;
 	opacity: 1;
 }
@@ -128,11 +128,11 @@
 	justify-content: space-between;
 }
 .menuOptions,
-.logoTitle,
+.logo_and_title,
 .minimizeClose {
 }
 
-.logoTitle {
+.logo_and_title {
 	flex: 1;
 	display: flex;
 	align-items: center;
@@ -141,10 +141,10 @@
 	flex-wrap: wrap;
 	gap: 4px;
 }
-.logoTitle img {
+.logo_and_title img {
 	width: 35px;
 }
-.logoTitle .title {
+.logo_and_title .title {
 }
 .minimizeClose {
 	display: flex;

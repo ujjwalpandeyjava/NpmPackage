@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import downArrow from "./assets/downArrow.svg";
 import minimize from "./assets/minimize.svg";
 import message from "./assets/message.svg";
@@ -37,7 +37,7 @@ function IMBot() {
 
 	return (
 		<div className="bubble">
-			<div className={`updateIcon ${showModal ? "active" : ""}`} onClick={toggleChatBox}>
+			<div className={`showModal ${showModal ? "active" : ""}`} onClick={toggleChatBox}>
 				<div>
 					<img src={message} alt="message" />
 				</div>
@@ -51,7 +51,7 @@ function IMBot() {
 						<div className="btn menuOptions">
 							<img src={menu} alt="Close and minimize bot" />
 						</div>
-						<div className="logoTitle">
+						<div className="logo_and_title">
 							<img src="https://api.intellylabs.com/logo_image" alt="alt..." />
 							<div className="botChatTitle" title="Bot Title...">Bot Title...</div>
 						</div>
