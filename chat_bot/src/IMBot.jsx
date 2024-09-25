@@ -3,7 +3,7 @@ import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 import React, { useEffect, useRef, useState } from 'react';
 import { RiCloseLargeFill } from "react-icons/ri";
 import { IoMdChatboxes } from "react-icons/io";
-import { HashLoader } from "react-spinners"
+import { HashLoader, PropagateLoader } from "react-spinners"
 import ChatMessage from "./ChatMessage"
 import UseApi from "./UseApi";
 import './IMBot.scss';
@@ -141,6 +141,7 @@ function IMBot() {
 						<div className="content">
 							<div className="content_chat" >
 								{chat.map((eachChat, index) => <ChatMessage chatObj={eachChat} key={"chat_" + index} />)}
+								{loadingUserQuery && <div className="waitingForResp"><PropagateLoader size={"1rem"} /></div>}
 							</div>
 							<div className="content_chatInputs">
 								<input type="text" id="inputFieldText" ref={fieldInputQuery_Ref} placeholder="Message" onKeyDownCapture={handleKeyPress} />

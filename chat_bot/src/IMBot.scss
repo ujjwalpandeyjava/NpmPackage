@@ -19,6 +19,12 @@
 .btn:hover {
 	filter: drop-shadow(0 0 2px gray);
 }
+.waitingForResp {
+	display: block;
+	text-align: center;
+	margin: 0.5rem auto;
+	height: 1rem;
+}
 .loadingBot,
 .errorInBotLoading {
 	position: fixed;
@@ -199,6 +205,7 @@
 				font-family: "Montserrat", sans-serif !important;
 			}
 
+			// By user
 			.question {
 				box-shadow: 0 3px 4px #b8ffff96;
 				margin-bottom: 1rem;
@@ -206,6 +213,8 @@
 				justify-content: flex-end;
 				padding: 4px;
 			}
+
+			// By bot
 			.answer {
 				box-shadow: 0 3px 4px #c0c9f466;
 				display: flex;
